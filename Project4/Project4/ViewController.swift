@@ -17,17 +17,20 @@ class ViewController: UIViewController, WKNavigationDelegate {
     
     override func loadView() {
         super.loadView()
-        let webConfiguration = WKWebViewConfiguration()
-        view.frame = view.bounds
-        webView = WKWebView(frame: CGRect( x: 0, y: 92, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 92), configuration: webConfiguration)
+        webView = WKWebView()
         webView.navigationDelegate = self
+        view.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+        webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        navigationController?.navigationBar.prefersLargeTitles = true
-        view.addSubview(webView)
+        
         let url = URL(string: "https://" + websites[initWebsite])!
         webView.load(URLRequest(url: url))
         webView.allowsBackForwardNavigationGestures = true
@@ -82,6 +85,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         title = webView.title
         navigationController?.interactivePopGestureRecognizer?.isEnabled = !webView.canGoBack
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -99,6 +103,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
             present(ac, animated: true)
         }
         decisionHandler(.cancel)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+       super.viewWillDisappear(animated)
+       navigationController?.navigationBar.prefersLargeTitles = true
     }
 }
 
